@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cloudApi, CloudSession } from "@/lib/cloudApi";
+import { supabaseConfigured } from "@/lib/supabase";
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<CloudSession | null>(null);
@@ -14,6 +15,10 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   const [checkEmail, setCheckEmail] = useState(false);
 
   useEffect(() => {
+    if (!supabaseConfigured) {
+      setLoading(false);
+      return;
+    }
     cloudApi.currentSession().then((s) => {
       setSession(s);
       setLoading(false);
@@ -42,6 +47,31 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   };
 
   if (loading) return null;
+
+  if (!supabaseConfigured) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "var(--bg-canvas, #0f1419)",
+          color: "var(--text-primary, #e6edf3)",
+          padding: 20,
+        }}
+      >
+        <div style={{ maxWidth: 420 }}>
+          <h1 style={{ fontSize: 18, fontWeight: 700, marginBottom: 10 }}>Configuration needed</h1>
+          <p style={{ fontSize: 13, color: "var(--text-secondary, #8b98a5)", lineHeight: 1.5 }}>
+            This deployment is missing <code>NEXT_PUBLIC_SUPABASE_URL</code> and/or{" "}
+            <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>. Add them under your Vercel project's Settings →
+            Environment Variables, then redeploy (Vercel only applies env var changes on the next deploy).
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!session) {
     return (
