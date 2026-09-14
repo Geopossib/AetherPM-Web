@@ -21,6 +21,8 @@ import { api } from "@/lib/api";
 
 export default function App() {
   const sidebarCollapsed = useAppStore((s) => s.sidebarCollapsed);
+  const setSidebarCollapsed = useAppStore((s) => s.setSidebarCollapsed);
+  const toggleSidebar = useAppStore((s) => s.toggleSidebar);
   const theme = useAppStore((s) => s.theme);
   const projects = useAppStore((s) => s.projects);
   const setProjects = useAppStore((s) => s.setProjects);
@@ -28,6 +30,17 @@ export default function App() {
   const setCurrentProject = useAppStore((s) => s.setCurrentProject);
   const [loaded, setLoaded] = useState(false);
   const [showNewProject, setShowNewProject] = useState(false);
+
+  // On mobile, sidebarCollapsed=false is repurposed by CSS to mean
+  // "drawer open" (see index.css). Start it closed on phones instead
+  // of inheriting the desktop default of "expanded", which would
+  // otherwise cover the whole screen with the drawer on first load.
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth <= 768) {
+      setSidebarCollapsed(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // On first launch, load projects from the local SQLite DB via Rust,
   // and select the first one so the workspace isn't empty.
@@ -60,6 +73,7 @@ export default function App() {
   if (loaded && projects.length === 0) {
     return (
       <div className="app-shell">
+        <div className="sidebar-backdrop" onClick={toggleSidebar} />
         <Sidebar />
         <TopBar />
         <main className="main-area">
@@ -74,6 +88,7 @@ export default function App() {
 
   return (
     <div className={`app-shell${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
+      <div className="sidebar-backdrop" onClick={toggleSidebar} />
       <Sidebar />
       <TopBar onNewProject={() => setShowNewProject(true)} />
       <main className="main-area scrollbar-thin">

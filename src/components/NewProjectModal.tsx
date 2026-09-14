@@ -41,6 +41,7 @@ export function NewProjectModal({ onClose, onCreated }: { onClose: () => void; o
         onClick={(e) => e.stopPropagation()}
         style={{
           width: 480,
+          maxWidth: "92vw",
           background: "var(--bg-surface-raised)",
           border: "1px solid var(--border-strong)",
           borderRadius: "var(--radius-md)",

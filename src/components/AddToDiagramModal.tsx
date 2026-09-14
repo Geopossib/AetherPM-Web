@@ -29,7 +29,7 @@ export function AddToDiagramModal({
     <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 300 }}>
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{ width: 420, maxHeight: "70vh", display: "flex", flexDirection: "column", background: "var(--bg-surface-raised)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", boxShadow: "0 24px 60px rgba(0,0,0,0.5)" }}
+        style={{ width: 420, maxWidth: "92vw", maxHeight: "70vh", display: "flex", flexDirection: "column", background: "var(--bg-surface-raised)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", boxShadow: "0 24px 60px rgba(0,0,0,0.5)" }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px", borderBottom: "1px solid var(--border-subtle)" }}>
           <span style={{ fontSize: 13, fontWeight: 600 }}>{title}</span>

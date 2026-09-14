@@ -11,6 +11,7 @@ interface AppState {
   setProjects: (p: Project[]) => void;
   setCurrentProject: (id: string | null) => void;
   toggleSidebar: () => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
   setCommandPaletteOpen: (open: boolean) => void;
   toggleTheme: () => void;
 }
@@ -25,6 +26,7 @@ export const useAppStore = create<AppState>((set) => ({
   setProjects: (projects) => set({ projects }),
   setCurrentProject: (currentProjectId) => set({ currentProjectId }),
   toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
+  setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
   setCommandPaletteOpen: (commandPaletteOpen) => set({ commandPaletteOpen }),
   toggleTheme: () => set((s) => ({ theme: s.theme === "dark" ? "light" : "dark" })),
 }));

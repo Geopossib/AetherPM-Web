@@ -29,6 +29,12 @@ export function Sidebar() {
   const collapsed = useAppStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useAppStore((s) => s.toggleSidebar);
 
+  // On mobile the drawer is open (collapsed=false); close it after
+  // navigating so the user lands on the page instead of the overlay.
+  const closeOnMobileNav = () => {
+    if (typeof window !== "undefined" && window.innerWidth <= 768 && !collapsed) toggleSidebar();
+  };
+
   return (
     <aside
       className="sidebar scrollbar-thin"
@@ -66,6 +72,7 @@ export function Sidebar() {
             key={to}
             to={to}
             end={end}
+            onClick={closeOnMobileNav}
             style={({ isActive }) => ({
               display: "flex",
               alignItems: "center",
@@ -91,6 +98,7 @@ export function Sidebar() {
       <div style={{ marginTop: "auto", padding: "var(--space-2)" }}>
         <NavLink
           to="/settings"
+          onClick={closeOnMobileNav}
           style={({ isActive }) => ({
             display: "flex",
             alignItems: "center",

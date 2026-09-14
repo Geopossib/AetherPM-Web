@@ -63,7 +63,7 @@ export function CommandPalette() {
       onClick={() => setOpen(false)}
       style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", paddingTop: "12vh", zIndex: 100 }}
     >
-      <div onClick={(e) => e.stopPropagation()} style={{ width: 480 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: 480, maxWidth: "92vw" }}>
         <Command
           shouldFilter={false}
           style={{ background: "var(--bg-surface-raised)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", overflow: "hidden", boxShadow: "0 16px 40px rgba(0,0,0,0.4)" }}
