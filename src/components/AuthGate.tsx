@@ -12,7 +12,6 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [checkEmail, setCheckEmail] = useState(false);
 
   useEffect(() => {
     if (!supabaseConfigured) {
@@ -36,8 +35,17 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
         setSession(s);
       } else {
         const s = await cloudApi.signUp(email, password);
-        if (s) setSession(s);
-        else setCheckEmail(true); // email confirmation required
+        if (s) {
+          setSession(s);
+        } else {
+          // Email-confirmation gate removed for now — if your Supabase
+          // project still has "Confirm email" enabled, this sign-in
+          // will fail with a real Supabase error below. Disable
+          // Confirm email under Authentication > Providers > Email in
+          // the Supabase dashboard to make sign-up work end-to-end.
+          const s2 = await cloudApi.signIn(email, password);
+          setSession(s2);
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -104,24 +112,18 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
               Create account
             </button>
           </div>
-          {checkEmail ? (
-            <p style={{ fontSize: 12, color: "var(--text-secondary, #8b98a5)" }}>
-              Check your email to confirm your account, then sign in.
-            </p>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ padding: "8px 10px", fontSize: 13 }} />
-              <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ padding: "8px 10px", fontSize: 13 }} />
-              {error && <div style={{ fontSize: 11, color: "#f87171" }}>{error}</div>}
-              <button
-                onClick={submit}
-                disabled={busy || !email || !password}
-                style={{ padding: "9px 12px", background: "#22d3ee", color: "#08131a", borderRadius: 6, fontSize: 13, fontWeight: 600 }}
-              >
-                {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
-              </button>
-            </div>
-          )}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ padding: "8px 10px", fontSize: 13 }} />
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ padding: "8px 10px", fontSize: 13 }} />
+            {error && <div style={{ fontSize: 11, color: "#f87171" }}>{error}</div>}
+            <button
+              onClick={submit}
+              disabled={busy || !email || !password}
+              style={{ padding: "9px 12px", background: "#22d3ee", color: "#08131a", borderRadius: 6, fontSize: 13, fontWeight: 600 }}
+            >
+              {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
+            </button>
+          </div>
         </div>
       </div>
     );
