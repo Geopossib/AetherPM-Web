@@ -73,10 +73,11 @@ export function BoardView() {
       <div style={{ padding: "var(--space-4) 0 0" }}>
         <FilterBar projectId={currentProjectId} filter={filter} onChange={setFilter} assignees={assignees} />
       </div>
-      <div style={{ display: "flex", gap: "var(--space-4)", padding: "var(--space-4) var(--space-5) var(--space-5)", flex: 1, overflowX: "auto" }}>
+      <div className="board-columns scrollbar-thin" style={{ display: "flex", gap: "var(--space-4)", padding: "var(--space-4) var(--space-5) var(--space-5)", flex: 1, overflowX: "auto" }}>
         {COLUMNS.map((status) => (
           <div
             key={status}
+            className="board-column"
             style={{
               minWidth: 260,
               display: "flex",

@@ -203,6 +203,19 @@ a { color: var(--accent-text); }
   .master-detail:not(.mobile-detail-active) .detail-pane { display: none; }
   .master-detail.mobile-detail-active .master-pane { display: none; }
 
+  /* Kanban board: full-width swipeable columns with scroll-snap
+     instead of a fixed 260px column showing a sliver of the next one. */
+  .board-columns {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-left: var(--space-4) !important;
+    padding-right: var(--space-4) !important;
+  }
+  .board-column {
+    min-width: calc(100vw - 2 * var(--space-4) - 16px) !important;
+    scroll-snap-align: start;
+  }
+
   /* Touch targets: buttons and inputs get comfortably tappable, not
      just click-sized. */
   button, input, select, textarea { min-height: 32px; }

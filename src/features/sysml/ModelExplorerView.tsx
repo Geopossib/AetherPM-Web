@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ShieldAlert, X } from "lucide-react";
+import { ShieldAlert, X, ArrowLeft } from "lucide-react";
 import { useAppStore } from "@/stores/appStore";
 import { api, Diagram, DiagramType, SysmlElement, ValidationIssue } from "@/lib/api";
 import { ModelTree } from "./ModelTree";
@@ -18,6 +18,7 @@ export function ModelExplorerView() {
   const [activeDiagram, setActiveDiagram] = useState<Diagram | null>(null);
   const [issues, setIssues] = useState<ValidationIssue[]>([]);
   const [showValidation, setShowValidation] = useState(false);
+  const [mobileShowDetail, setMobileShowDetail] = useState(false);
 
   const refresh = () => {
     if (!currentProjectId) return;
@@ -52,16 +53,30 @@ export function ModelExplorerView() {
   const warningCount = issues.filter((i) => i.severity === "warning").length;
 
   return (
-    <div style={{ display: "flex", height: "100%" }}>
+    <div className={`master-detail${mobileShowDetail ? " mobile-detail-active" : ""}`} style={{ display: "flex", height: "100%" }}>
       <ModelTree
         elements={elements}
         diagrams={diagrams}
         activeDiagramId={activeDiagram?.id ?? null}
-        onSelectDiagram={(id) => setActiveDiagram(diagrams.find((d) => d.id === id) ?? null)}
-        onNewDiagram={newDiagram}
+        onSelectDiagram={(id) => {
+          setActiveDiagram(diagrams.find((d) => d.id === id) ?? null);
+          setMobileShowDetail(true);
+        }}
+        onNewDiagram={async (type) => {
+          await newDiagram(type);
+          setMobileShowDetail(true);
+        }}
       />
 
-      <div style={{ flex: 1, position: "relative", display: "flex" }}>
+      <div className="detail-pane" style={{ flex: 1, position: "relative", display: "flex", flexDirection: "column" }}>
+        <button
+          onClick={() => setMobileShowDetail(false)}
+          className="show-mobile-flex"
+          style={{ alignItems: "center", gap: 6, color: "var(--text-secondary)", fontSize: 13, padding: "10px 14px", flexShrink: 0 }}
+        >
+          <ArrowLeft size={15} /> Model tree
+        </button>
+        <div style={{ flex: 1, position: "relative", display: "flex" }}>
         {activeDiagram ? (
           <DiagramCanvas key={activeDiagram.id} diagram={activeDiagram} projectId={currentProjectId} elements={elements} onElementsChanged={refresh} />
         ) : (
@@ -100,6 +115,7 @@ export function ModelExplorerView() {
               bottom: 60,
               right: 16,
               width: 340,
+              maxWidth: "92vw",
               maxHeight: 360,
               overflowY: "auto",
               background: "var(--bg-surface-raised)",
@@ -130,6 +146,7 @@ export function ModelExplorerView() {
             )}
           </div>
         )}
+      </div>
       </div>
     </div>
   );

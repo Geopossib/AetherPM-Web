@@ -26,7 +26,7 @@ export function ModelTree({
   const packages = Array.from(new Set(elements.map((e) => e.package || "Unassigned")));
 
   return (
-    <div style={{ width: 240, borderRight: "1px solid var(--border-subtle)", overflowY: "auto" }} className="scrollbar-thin">
+    <div className="master-pane scrollbar-thin" style={{ width: 240, borderRight: "1px solid var(--border-subtle)", overflowY: "auto" }}>
       <div style={{ padding: "12px 14px 6px", fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase" as const }}>
         Diagrams
       </div>
