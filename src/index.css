@@ -146,6 +146,7 @@ a { color: var(--accent-text); }
    instead of a permanent column.
 ------------------------------------------------------------------ */
 .mobile-menu-btn { display: none; }
+.show-mobile-flex { display: none; }
 .sidebar-backdrop { display: none; }
 
 @media (max-width: 768px) {
@@ -190,6 +191,17 @@ a { color: var(--accent-text); }
   .main-area { -webkit-overflow-scrolling: touch; }
 
   .hide-mobile { display: none !important; }
+  .show-mobile-flex { display: flex !important; }
+
+  /* Master-detail views (Meeting Notes, Model Explorer): show one pane
+     at a time on mobile instead of squeezing both into a 360px screen.
+     Toggle the .mobile-detail-active class on .master-detail based on
+     selection state. */
+  .master-detail { flex-direction: column; }
+  .master-detail .master-pane { width: 100% !important; height: 100%; }
+  .master-detail .detail-pane { width: 100%; }
+  .master-detail:not(.mobile-detail-active) .detail-pane { display: none; }
+  .master-detail.mobile-detail-active .master-pane { display: none; }
 
   /* Touch targets: buttons and inputs get comfortably tappable, not
      just click-sized. */

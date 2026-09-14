@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { Plus } from "lucide-react";
+import { Plus, ArrowLeft } from "lucide-react";
 import { useAppStore } from "@/stores/appStore";
 import { api, MeetingNote } from "@/lib/api";
 import { useAutosave, AutosaveIndicator } from "@/lib/useAutosave";
@@ -9,11 +9,17 @@ export function MeetingNotesView() {
   const currentProjectId = useAppStore((s) => s.currentProjectId);
   const [notes, setNotes] = useState<MeetingNote[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [mobileShowDetail, setMobileShowDetail] = useState(false);
 
   const refresh = () => {
     if (currentProjectId) api.listMeetingNotes(currentProjectId).then(setNotes).catch(console.error);
   };
   useEffect(refresh, [currentProjectId]);
+
+  const selectNote = (id: string) => {
+    setSelectedId(id);
+    setMobileShowDetail(true);
+  };
 
   const addNote = async () => {
     if (!currentProjectId) return;
@@ -26,7 +32,7 @@ export function MeetingNotesView() {
       notes: "",
     });
     refresh();
-    setSelectedId(created.id);
+    selectNote(created.id);
   };
 
   if (!currentProjectId) {
@@ -36,8 +42,8 @@ export function MeetingNotesView() {
   const selected = notes.find((n) => n.id === selectedId) ?? notes[0] ?? null;
 
   return (
-    <div style={{ display: "flex", height: "100%" }}>
-      <div style={{ width: 260, borderRight: "1px solid var(--border-subtle)", overflowY: "auto" }} className="scrollbar-thin">
+    <div className={`master-detail${mobileShowDetail ? " mobile-detail-active" : ""}`} style={{ display: "flex", height: "100%" }}>
+      <div className="master-pane scrollbar-thin" style={{ width: 260, borderRight: "1px solid var(--border-subtle)", overflowY: "auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px" }}>
           <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)" }}>Meeting Notes</span>
           <button onClick={addNote} title="New note" style={{ color: "var(--text-tertiary)" }}>
@@ -47,7 +53,7 @@ export function MeetingNotesView() {
         {notes.map((n) => (
           <button
             key={n.id}
-            onClick={() => setSelectedId(n.id)}
+            onClick={() => selectNote(n.id)}
             style={{
               display: "block",
               width: "100%",
@@ -64,7 +70,14 @@ export function MeetingNotesView() {
         {notes.length === 0 && <div style={{ padding: 14, fontSize: 12, color: "var(--text-tertiary)" }}>No meeting notes yet.</div>}
       </div>
 
-      <div style={{ flex: 1, padding: "var(--space-5)", overflowY: "auto" }} className="scrollbar-thin">
+      <div className="detail-pane scrollbar-thin" style={{ flex: 1, padding: "var(--space-5)", overflowY: "auto" }}>
+        <button
+          onClick={() => setMobileShowDetail(false)}
+          className="show-mobile-flex"
+          style={{ alignItems: "center", gap: 6, color: "var(--text-secondary)", fontSize: 13, marginBottom: 14 }}
+        >
+          <ArrowLeft size={15} /> All notes
+        </button>
         {selected ? (
           <MeetingNoteEditor key={selected.id} note={selected} onSaved={refresh} />
         ) : (
