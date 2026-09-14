@@ -15,16 +15,19 @@ export function NewProjectModal({ onClose, onCreated }: { onClose: () => void; o
   const [description, setDescription] = useState("");
   const [type, setType] = useState<ProjectType>("SystemsEngineering");
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const submit = async () => {
     if (!name.trim()) return;
     setBusy(true);
+    setError(null);
     try {
       const project = await api.createProject(name.trim(), description.trim() || null, type);
       onCreated(project.id);
       onClose();
     } catch (err) {
       console.error(err);
+      setError(err instanceof Error ? err.message : String(err));
       setBusy(false);
     }
   };
@@ -100,23 +103,26 @@ export function NewProjectModal({ onClose, onCreated }: { onClose: () => void; o
           </div>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, padding: 16, borderTop: "1px solid var(--border-subtle)" }}>
-          <button onClick={onClose} style={{ padding: "7px 12px", color: "var(--text-secondary)" }}>
-            Cancel
-          </button>
-          <button
-            onClick={submit}
-            disabled={!name.trim() || busy}
-            style={{
-              padding: "7px 14px",
-              background: name.trim() ? "var(--accent)" : "var(--border-subtle)",
-              color: name.trim() ? "#08131a" : "var(--text-tertiary)",
-              borderRadius: "var(--radius-sm)",
-              fontWeight: 600,
-            }}
-          >
-            {busy ? "Creating…" : "Create project"}
-          </button>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, padding: 16, borderTop: "1px solid var(--border-subtle)" }}>
+          <span style={{ fontSize: 11, color: "#f87171", maxWidth: 260 }}>{error}</span>
+          <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+            <button onClick={onClose} style={{ padding: "7px 12px", color: "var(--text-secondary)" }}>
+              Cancel
+            </button>
+            <button
+              onClick={submit}
+              disabled={!name.trim() || busy}
+              style={{
+                padding: "7px 14px",
+                background: name.trim() ? "var(--accent)" : "var(--border-subtle)",
+                color: name.trim() ? "#08131a" : "var(--text-tertiary)",
+                borderRadius: "var(--radius-sm)",
+                fontWeight: 600,
+              }}
+            >
+              {busy ? "Creating…" : "Create project"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
